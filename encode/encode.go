@@ -62,13 +62,11 @@ func parseKeyValue(arg string) (string, interface{}, error) {
 		return "", "", fmt.Errorf("parse error: %s", arg)
 	}
 
-	if val, err := strconv.Atoi(splitted[1]); err == nil {
-		return splitted[0], val, nil
+	val, err := parseValue(splitted[1])
+	if err != nil {
+		return "", "", err
 	}
-	if val, err := strconv.ParseBool(splitted[1]); err == nil {
-		return splitted[0], val, nil
-	}
-	return splitted[0], splitted[1], nil
+	return splitted[0], val, nil
 }
 
 func parseValue(arg string) (interface{}, error) {
