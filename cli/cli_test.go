@@ -45,6 +45,7 @@ func TestNewCli(t *testing.T) {
 			outs := &bytes.Buffer{}
 			errs := &bytes.Buffer{}
 			args := strings.Split(test.cmdLineArg, " ")
+
 			c, err := newCli(ins, outs, errs, args)
 			if test.expectedMsg != "" {
 				assert.NotNil(t, err)

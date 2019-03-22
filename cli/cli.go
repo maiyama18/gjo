@@ -76,5 +76,6 @@ func (c *Cli) run() int {
 		fmt.Printf("%s - %s\n", name, version)
 		return exitCodeOK
 	}
+
 	return exitCodeOK
 }
