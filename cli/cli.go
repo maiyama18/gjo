@@ -3,6 +3,7 @@ package cli
 import (
 	"flag"
 	"fmt"
+	"gjo/encode"
 	"io"
 	"os"
 )
@@ -17,6 +18,7 @@ type Cli struct {
 	inStream  io.Reader
 	outStream io.Writer
 	errStream io.Writer
+	args      []string
 	opts      *Options
 }
 
@@ -37,6 +39,7 @@ options:
 const (
 	exitCodeOK = iota
 	exitCodeCliInitErr
+	exitCodeJsonEncodeErr
 )
 
 func Run() int {
@@ -66,16 +69,24 @@ func newCli(inStream io.Reader, outStream, errStream io.Writer, args []string) (
 	if err := fs.Parse(args); err != nil {
 		return nil, err
 	}
-	options := &Options{showVersion, array, pretty}
+	opts := &Options{showVersion, array, pretty}
 
-	return &Cli{inStream, outStream, errStream, options}, nil
+	gjoArgs := fs.Args()
+
+	return &Cli{inStream, outStream, errStream, gjoArgs, opts}, nil
 }
 
 func (c *Cli) run() int {
 	if c.opts.showVersion {
-		fmt.Printf("%s - %s\n", name, version)
+		_, _ = fmt.Fprintf(c.outStream, "%s - %s\n", name, version)
 		return exitCodeOK
 	}
 
+	encoded, err := encode.Encode(c.args, c.opts.array, c.opts.pretty)
+	if err != nil {
+		_, _ = fmt.Fprintf(c.errStream, "%s: %s\n", name, err)
+		return exitCodeJsonEncodeErr
+	}
+	_, _ = fmt.Fprintf(c.outStream, "%s\n", encoded)
 	return exitCodeOK
 }
