@@ -28,6 +28,16 @@ func TestNewCli(t *testing.T) {
 			expectedOpts: &Options{false, false, false},
 			expectedMsg:  "gjo -",
 		},
+		{
+			name:         "show version",
+			cmdLineArg:   "-v",
+			expectedOpts: &Options{true, false, false},
+		},
+		{
+			name:         "pretty print & array value",
+			cmdLineArg:   "-p -a",
+			expectedOpts: &Options{false, true, true},
+		},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
@@ -42,6 +52,8 @@ func TestNewCli(t *testing.T) {
 			} else {
 				assert.Nil(t, err)
 				assert.NotNil(t, c)
+				assert.Empty(t, outs.String())
+				assert.Empty(t, errs.String())
 				assert.Equal(t, test.expectedOpts, c.opts)
 			}
 		})
