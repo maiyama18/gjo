@@ -17,7 +17,7 @@ type Cli struct {
 	inStream  io.Reader
 	outStream io.Writer
 	errStream io.Writer
-	options   *Options
+	opts      *Options
 }
 
 const name = "gjo"
@@ -53,6 +53,7 @@ func newCli(inStream io.Reader, outStream, errStream io.Writer, args []string) (
 	fs.SetOutput(errStream)
 	fs.Usage = func() {
 		_, _ = fmt.Fprintf(errStream, usage)
+		fs.PrintDefaults()
 	}
 	var (
 		showVersion bool
@@ -71,7 +72,7 @@ func newCli(inStream io.Reader, outStream, errStream io.Writer, args []string) (
 }
 
 func (c *Cli) run() int {
-	if c.options.showVersion {
+	if c.opts.showVersion {
 		fmt.Printf("%s - %s\n", name, version)
 		return exitCodeOK
 	}
